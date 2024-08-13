@@ -1,0 +1,93 @@
+[gd_scene load_steps=10 format=3 uid="uid://ch2kj3l3a4om"]
+
+[ext_resource type="PackedScene" uid="uid://b1fctxj1ruyk1" path="res://scenes/player_paddle.tscn" id="1_3sy8o"]
+[ext_resource type="Script" path="res://scripts/game.gd" id="1_tns3o"]
+[ext_resource type="PackedScene" uid="uid://cma4sdah5pj2x" path="res://scenes/ai_paddle.tscn" id="2_si5aj"]
+[ext_resource type="PackedScene" uid="uid://bwbl0dr8i0hwd" path="res://scenes/player_score_label.tscn" id="4_4dko0"]
+[ext_resource type="PackedScene" uid="uid://ddiwsbch4h3c" path="res://scenes/ai_score_label.tscn" id="5_8j6u8"]
+[ext_resource type="Script" path="res://scripts/ai_paddle.gd" id="6_dxjs6"]
+[ext_resource type="PackedScene" uid="uid://c1a7b50034syn" path="res://scenes/player_score_area.tscn" id="7_epngq"]
+[ext_resource type="PackedScene" uid="uid://8l6hadkqj5hm" path="res://scenes/ai_score_area.tscn" id="8_mso2h"]
+
+[sub_resource type="WorldBoundaryShape2D" id="WorldBoundaryShape2D_lp3cd"]
+
+[node name="Game" type="Node"]
+script = ExtResource("1_tns3o")
+WINNING_SCORE = 3
+
+[node name="Borders" type="Node" parent="."]
+
+[node name="BorderTop" type="StaticBody2D" parent="Borders"]
+position = Vector2(480, 0)
+rotation = -3.14159
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Borders/BorderTop"]
+scale = Vector2(5, 1)
+shape = SubResource("WorldBoundaryShape2D_lp3cd")
+
+[node name="BorderBottom" type="StaticBody2D" parent="Borders"]
+position = Vector2(480, 540)
+scale = Vector2(5, 1)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Borders/BorderBottom"]
+shape = SubResource("WorldBoundaryShape2D_lp3cd")
+
+[node name="ScoreAreas" type="Node" parent="."]
+
+[node name="PlayerScoreArea" parent="ScoreAreas" node_paths=PackedStringArray("score_label", "paddle") instance=ExtResource("7_epngq")]
+position = Vector2(1000, 270)
+collision_mask = 2
+score_label = NodePath("../../Scores/PlayerScoreLabel")
+paddle = NodePath("../../Paddles/PlayerPaddle")
+
+[node name="AIScoreArea" parent="ScoreAreas" node_paths=PackedStringArray("score_label", "paddle") instance=ExtResource("8_mso2h")]
+position = Vector2(-40, 270)
+collision_mask = 2
+score_label = NodePath("../../Scores/AIScoreLabel")
+paddle = NodePath("../../Paddles/AIPaddle")
+
+[node name="Paddles" type="Node" parent="."]
+
+[node name="PlayerPaddle" parent="Paddles" instance=ExtResource("1_3sy8o")]
+position = Vector2(25, 270)
+
+[node name="AIPaddle" parent="Paddles" instance=ExtResource("2_si5aj")]
+position = Vector2(935, 270)
+script = ExtResource("6_dxjs6")
+SPEED = 200.0
+
+[node name="Scores" type="Node" parent="."]
+
+[node name="PlayerScoreLabel" parent="Scores" instance=ExtResource("4_4dko0")]
+offset_left = 416.0
+offset_top = 8.0
+offset_right = 456.0
+offset_bottom = 31.0
+
+[node name="AIScoreLabel" parent="Scores" instance=ExtResource("5_8j6u8")]
+offset_left = 504.0
+offset_top = 8.0
+offset_right = 544.0
+offset_bottom = 31.0
+
+[node name="Winner" type="Label" parent="."]
+visible = false
+z_index = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -177.0
+offset_top = -120.0
+offset_right = 177.0
+offset_bottom = -65.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_font_sizes/font_size = 40
+text = "THE PLAYER WINS!"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[connection signal="body_entered" from="ScoreAreas/PlayerScoreArea" to="." method="_on_player_score_area_body_entered"]
+[connection signal="body_entered" from="ScoreAreas/AIScoreArea" to="." method="_on_ai_score_area_body_entered"]

@@ -1,0 +1,5 @@
+[gd_scene load_steps=2 format=3 uid="uid://c1a7b50034syn"]
+
+[ext_resource type="PackedScene" uid="uid://bayp6pmsg2fuh" path="res://scenes/score_area.tscn" id="1_rknk3"]
+
+[node name="PlayerScoreArea" instance=ExtResource("1_rknk3")]
