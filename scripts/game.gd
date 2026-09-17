@@ -78,7 +78,7 @@ func _ready():
 	player_score_area = $ScoreAreas/PlayerScoreArea
 	ai_score_area = $ScoreAreas/AIScoreArea
 	winner_label= $Winner
-	
+
 	add_ball()
 
 

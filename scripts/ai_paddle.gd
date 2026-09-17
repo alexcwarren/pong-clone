@@ -30,15 +30,15 @@ func _init():
 func _physics_process(delta):
 	# Keep AI paddle from moving along x-axis
 	position.x = start_position.x
-	
+
 	if can_move and is_ball_going_right(false):
 		# Assume AI paddle is moving in +ve y direction (down)
 		var direction: int = 1
-		
+
 		# Determine if paddle should move in -ve y direction (up)
 		if position.y > ball_position.y:
 			direction = -1
-		
+
 		# Apply change in AI paddle's y position
 		position.y += direction * SPEED * delta
 		# Keep AI paddle from going beyond borders

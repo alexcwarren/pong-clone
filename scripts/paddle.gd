@@ -15,7 +15,8 @@ func reset():
 
 
 func clamp_y(y_pos: float):
-	return clamp(y_pos, half_height, screen_size.y - half_height)
+	var viewport_height := get_viewport_rect().size.y
+	return clamp(y_pos, half_height, viewport_height - half_height)
 
 
 func shorten():
@@ -25,8 +26,6 @@ func shorten():
 
 
 func _ready():
-	# Get size of Paddle
-	screen_size = get_viewport().size
 	# Determine half the height
 	half_height = $Sprite2D.get_rect().size.y / 2
 	# Initialize with movement disabled

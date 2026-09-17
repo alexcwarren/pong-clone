@@ -14,7 +14,7 @@ var can_move: bool = false
 func get_rand_angle() -> float:
 	# Create random integer to determine left/right direction
 	var rand_int: int = randi_range(1, 10)
-	
+
 	# PI*5/4 ⎺⎻⎼⎽           PI/-2          ⎽⎼⎻⎺ PI/-4
 	#           ⎺⎻⎼⎽          |         ⎽⎼⎻⎺
 	#              ⎺⎻⎼⎽       |      ⎽⎼⎻⎺
@@ -24,7 +24,7 @@ func get_rand_angle() -> float:
 	#              ⎽⎼⎻⎺       |      ⎺⎻⎼⎽
 	#           ⎽⎼⎻⎺          |         ⎺⎻⎼⎽
 	# PI*3/4 ⎽⎼⎻⎺           PI/2           ⎺⎻⎼⎽ PI/4
-	
+
 	# If even, ball goes right
 	if rand_int % 2 == 0:
 		return randf_range(PI/-4, PI/4)
@@ -42,7 +42,7 @@ func _init():
 	position = start_position
 	# Disable Ball moving until game has started
 	can_move = false
-	
+
 	# Set initial random velocity vector
 	var angle: float = get_rand_angle()
 	velocity.x = SPEED * cos(angle)
@@ -53,21 +53,21 @@ func _physics_process(delta):
 	# Only check for collision (and move the ball) if enabled to do so
 	if can_move:
 		var collision_object: KinematicCollision2D = move_and_collide(velocity * delta)
-	
-		# If collision occured
-		# (collision_object is "truthy", i.e. evaluates to "true", only if Ball collided)
+
 		if collision_object:
-			# Bounce/Reflect
-			var normal: Vector2 = collision_object.get_normal()
-			velocity = velocity.bounce(normal)
-			# normal values for each possible collision_object:
-			# (0, -1) -> Bottom border
-			# (1, 0) --> Player paddle
-			# (0, 1) --> Top border
-			# (-1, 0) -> AI paddle
-			
-			# If Ball collided with a Paddle (normal.y is 0 only for paddle collisions)
-			if normal.y == 0:
+			var collider = collision_object.get_collider()
+			var normal = collision_object.get_normal()
+
+			if collider is Paddle:
+				# Always send the ball away from the paddle.
+				var horizontal_direction = sign(global_position.x - collider.global_position.x)
+
+				velocity.x = abs(velocity.x) * horizontal_direction
 				velocity *= SPEED_INCREASE_RATE
-				# Keep velocity from getting too fast
 				velocity = clamp(velocity, MIN_VELOCITY, MAX_VELOCITY)
+
+				# Push the ball away so it doesn't remain touching the paddle.
+				position.x += horizontal_direction * 4.0
+			else:
+				# Top/bottom wall collision.
+				velocity = velocity.bounce(normal)
